@@ -38,12 +38,8 @@ jobs:
     - name: Build React app
       run: npm run build
       
-    - name: Copy events.html and game files to build directory
-      run: |
-        cp public/events.html build/
-        cp public/script.js build/
-        cp public/style.css build/
-        cp -r game build/
+    - name: Copy game files to build directory
+      run: cp -r game build/
       
     - name: Setup Pages
       uses: actions/configure-pages@v5
