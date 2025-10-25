@@ -56,7 +56,7 @@ async function loadEvents() {
             // При 401/403 (Unauthorized/Forbidden) очистимо токен і перезавантажимо
             if (response.status === 401 || response.status === 403) {
                 localStorage.removeItem('idToken');
-                window.location.href = '/index.html'; // Перенаправлення на логін
+                window.location.href = '/Brain-2.1/'; // Перенаправлення на логін
                 return;
             }
             throw new Error(`Помилка отримання даних: ${response.status} ${response.statusText}`);
@@ -107,7 +107,7 @@ async function loadEvents() {
                     last_update: event.last_update
                 }));
                 // Open game page in new tab (ПРИПУЩЕННЯ: '/game' існує)
-                window.open('/game', '_blank');
+                window.open('/Brain-2.1/game', '_blank');
             };
 
             row.innerHTML = `
@@ -151,7 +151,7 @@ window.handleDeleteEvent = async function(id, name) {
         if (!response.ok) { 
             if (response.status === 401 || response.status === 403) {
                 localStorage.removeItem('idToken');
-                window.location.href = '/index.html';
+                window.location.href = '/Brain-2.1/';
                 return;
             }
             throw new Error(`Помилка сервера: ${response.status} ${response.statusText}`); 
@@ -189,7 +189,7 @@ if (CREATE_EVENT_FORM) {
             if (!response.ok) { 
                 if (response.status === 401 || response.status === 403) {
                     localStorage.removeItem('idToken');
-                    window.location.href = '/index.html';
+                    window.location.href = '/Brain-2.1/';
                     return;
                 }
                 throw new Error(`Помилка сервера: ${response.status} ${response.statusText}`); 
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!idToken) {
         console.log("Токен не знайдено. Перенаправлення на сторінку логіну.");
         // Якщо токену немає, перенаправити на сторінку логіну
-        window.location.href = '/index.html'; // <-- ОСНОВНА ЗМІНА: Перенаправлення
+        window.location.href = '/Brain-2.1/'; // <-- ОСНОВНА ЗМІНА: Перенаправлення
         return; 
     }
     
