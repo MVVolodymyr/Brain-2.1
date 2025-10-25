@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React from 'react';
+import './App.css'; // Припустимо, цей файл існує для базових стилів
 
-function App() {
+// 1. ІМПОРТ ДЛЯ АУТЕНТИФІКАЦІЇ
+import { withAuthenticator } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css'; // Стилі для форм Amplify
+
+// 2. ГОЛОВНИЙ КОМПОНЕНТ (ОТРИМУЄ ПРОПСИ signOut та user ВІД withAuthenticator)
+function App({ signOut, user }) {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+        
+        {/* ======================================================= */}
+        {/* ЗАХИЩЕНИЙ КОНТЕНТ (ВИДНО ЛИШЕ ПІСЛЯ ВХОДУ)  */}
+        {/* ======================================================= */}
+        <h1>Вітаю, {user.username}! 🎉</h1>
+        <p>Ви успішно авторизувалися через AWS Cognito.</p>
+        
+        {/* Кнопка ВИХОДУ, використовує функцію, передану Amplify */}
+        <button 
+          onClick={signOut} 
+          style={{ 
+            marginTop: '20px',
+            padding: '10px 20px',
+            fontSize: '16px',
+            cursor: 'pointer'
+          }}
         >
-          Learn React
-        </a>
+          Вийти з системи
+        </button>
+        {/* ======================================================= */}
+        
       </header>
     </div>
   );
 }
 
-export default App;
+// 3. ЕКСПОРТ (Обгортаємо App компонентом withAuthenticator)
+// Це забезпечує відображення форм входу/реєстрації, якщо користувач не увійшов.
+export default withAuthenticator(App);
