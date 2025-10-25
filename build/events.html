@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список Подій - Brain 2.0</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body class="events-page">
+
+    <header class="fixed-header">
+        <form id="create-event-form" class="event-table"> 
+            
+            <input 
+                type="text" 
+                id="event-name-input" 
+                placeholder="Введіть назву нової події" 
+                required 
+                class="cell event-name-col"
+            >
+
+            <div class="cell created-col"></div>
+            <div class="cell modified-col"></div>
+
+            <div class="cell actions-col add-action">
+                <button type="submit" class="action-btn add-btn">+</button>
+            </div>
+            
+        </form>
+    </header>
+
+    <main class="scrollable-body">
+        
+        <div class="event-table" id="event-list-container"> 
+
+            <div class="table-row header-row">
+                <div class="cell event-name-col">Event name</div>
+                <div class="cell created-col">Created</div>
+                <div class="cell modified-col">Last modified</div>
+                <div class="cell actions-col">Дії</div>
+            </div>
+
+            </div>
+    </main>
+
+    <script src=public/script.js"></script>
+</body>
+</html>
