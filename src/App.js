@@ -8,6 +8,19 @@ import '@aws-amplify/ui-react/styles.css'; // Стилі для форм Amplify
 
 // 2. ГОЛОВНИЙ КОМПОНЕНТ (ОТРИМУЄ ПРОПСИ signOut та user ВІД withAuthenticator)
 function App({ signOut, user }) {
+  // Redirect to events.html after successful login
+  React.useEffect(() => {
+    if (user) {
+      // Store the authentication token for the events page
+      const idToken = user.signInUserSession?.idToken?.jwtToken;
+      if (idToken) {
+        localStorage.setItem('idToken', idToken);
+      }
+      // Redirect to events page
+      window.location.href = '/events.html';
+    }
+  }, [user]);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -15,8 +28,9 @@ function App({ signOut, user }) {
         {/* ======================================================= */}
         {/* ЗАХИЩЕНИЙ КОНТЕНТ (ВИДНО ЛИШЕ ПІСЛЯ ВХОДУ)  */}
         {/* ======================================================= */}
-        <h1>Вітаю, {user.username}! 🎉</h1>
+        <h1>Перенаправлення...</h1>
         <p>Ви успішно авторизувалися через AWS Cognito.</p>
+        <p>Перенаправляємо на сторінку подій...</p>
         
         {/* Кнопка ВИХОДУ, використовує функцію, передану Amplify */}
         <button 

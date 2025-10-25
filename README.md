@@ -1,70 +1,101 @@
-# Getting Started with Create React App
+# Brain 2.0 - Event Management App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React application with AWS Amplify authentication for managing events and games.
+
+## Features
+
+- 🔐 AWS Cognito Authentication
+- 📅 Event Management
+- 🎮 Game Integration
+- 📊 Statistics Tracking
+
+## Live Demo
+
+The application is deployed on GitHub Pages: [https://MVVolodymyr.github.io/my-app](https://MVVolodymyr.github.io/my-app)
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (version 18 or higher)
+- npm or yarn
+- AWS Account with Amplify configured
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/MVVolodymyr/my-app.git
+cd my-app
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Configure AWS Amplify:
+   - Make sure your `aws-exports.js` file is properly configured
+   - Ensure your AWS Cognito User Pool is set up correctly
+
+4. Start the development server:
+```bash
+npm start
+```
+
+The app will open at [http://localhost:3000](http://localhost:3000)
 
 ## Available Scripts
 
-In the project directory, you can run:
+- `npm start` - Runs the app in development mode
+- `npm run build` - Builds the app for production
+- `npm test` - Launches the test runner
+- `npm run eject` - Ejects from Create React App (one-way operation)
 
-### `npm start`
+## Deployment
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+This project is automatically deployed to GitHub Pages using GitHub Actions. The deployment workflow:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. Builds the React app
+2. Deploys the built files to the `gh-pages` branch
+3. GitHub Pages serves the app from the `gh-pages` branch
 
-### `npm test`
+## Project Structure
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+src/
+├── App.js              # Main React component with authentication
+├── index.js            # React app entry point
+├── aws-exports.js      # AWS Amplify configuration
+└── amplifyconfiguration.json
 
-### `npm run build`
+public/
+├── index.html          # Main HTML template
+├── events.html         # Events management page
+├── script.js           # Events page JavaScript
+└── style.css           # Styling
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+game/                   # Game-related files
+├── index.html
+├── game.js
+├── core.js
+└── audio/              # Game audio files
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Authentication Flow
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. User visits the app
+2. AWS Amplify shows login/signup form
+3. After successful authentication, user is redirected to `/events.html`
+4. The events page uses the stored JWT token for API calls
 
-### `npm run eject`
+## Contributing
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## License
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project is private and proprietary.
