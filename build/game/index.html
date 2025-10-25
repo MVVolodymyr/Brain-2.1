@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5M9PGYFQNR"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-5M9PGYFQNR');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Ring</title>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="/game/core.js"></script>
+    <script src="/game/game.js"></script>
+    <script src="/game/tables.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-group label {
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .control-group button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-group button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+
+        .control-group span {
+            color: white;
+            font-weight: bold;
+            font-size: 1.5em;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .retryBtn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .retryBtn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .teams-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .team-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        .team-card.red { border-color: #ff4757; }
+        .team-card.green { border-color: #2ed573; }
+        .team-card.blue { border-color: #3742fa; }
+        .team-card.white { border-color: #f1f2f6; }
+        .team-card.yellow { border-color: #ffa502; }
+        .team-card.pink { border-color: #ff3838; }
+
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .team-label {
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .edit-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .team-score {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .rounds-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .round-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .round-tab {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .round-tab.active {
+            background: rgba(255,255,255,0.4);
+            transform: translateY(-2px);
+        }
+
+        .round-tab:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .question-container {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .question-text {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .question-number {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .question-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .btn-green { background: #2ed573; color: white; }
+        .btn-red { background: #ff4757; color: white; }
+        .btn-gray { background: #57606f; color: white; }
+        .btn-small { padding: 8px 16px; font-size: 0.9em; }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .table-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .table-title {
+            color: white;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: #57606f;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background: rgba(0,0,0,0.05);
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .sum-row {
+            background: #2ed573 !important;
+            color: white;
+            font-weight: bold;
+        }
+
+        .settings-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: rgba(255,255,255,0.95);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            display: none;
+            min-width: 300px;
+        }
+
+        .team-setting {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            background: rgba(0,0,0,0.05);
+        }
+
+        .team-setting input {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 150px;
+        }
+
+        .team-setting button {
+            background: #2ed573;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .team-setting button:hover {
+            background: #26d065;
+        }
+
+        @media (max-width: 768px) {
+            .teams-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .question-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .round-tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Brain Ring</h1>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label style="font-size: 30px;" >Question:</label>
+                <button onclick="changeQuestion(-1)">
+                    <img src="/game/icon/angle-left.svg" alt="Previous" width="20" height="20">
+                </button>
+                <span style="font-size: 35px;" id="questionValue">1</span>
+                <button onclick="changeQuestion(1)">
+                    <img src="/game/icon/angle-right.svg" alt="Next" width="20" height="20">
+                </button>
+            </div>
+
+            <div class="control-group">
+                <label style="font-size: 30px;">Round:</label>
+                <button onclick="changeRound(-1)">
+                    <img src="/game/icon/angle-left.svg" alt="Previous" width="20" height="20">
+                </button>
+                <span style="font-size: 35px;" id="roundValue">2</span>
+                <button onclick="changeRound(1)">
+                    <img src="/game/icon/angle-right.svg" alt="Next" width="20" height="20">
+                </button>
+            </div>
+        </div>
+
+        <button class="retryBtn" onclick="retrySession()">Retry Session</button>
+        <div style="position: relative;">
+            <img id="muteIcon" src="/game/icon/mute_17879746.png" alt="Mute" style="width: 25px; height: 25px; cursor: pointer;" onclick="toggleMute()">
+            <img id="settingsIcon" src="https://cdn-icons-png.flaticon.com/512/2099/2099058.png" alt="Settings"
+                 style="width: 25px; height: 25px; cursor: pointer; margin-left: 10px;" onclick="toggleSettingsMenu()">
+
+            <div id="settingsMenu">
+                <div class="team-setting" data-team="red">
+                    <span class="team-label">Red</span>
+                    <button class="edit-btn" onclick="editTeamName('red')">
+                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                    </button>
+                </div>
+                <div class="team-setting" data-team="green">
+                    <span class="team-label">Green</span>
+                    <button class="edit-btn" onclick="editTeamName('green')">
+                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                    </button>
+                </div>
+                <div class="team-setting" data-team="blue">
+                    <span class="team-label">Blue</span>
+                    <button class="edit-btn" onclick="editTeamName('blue')">
+                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                    </button>
+                </div>
+                <div class="team-setting" data-team="white">
+                    <span class="team-label">White</span>
+                    <button class="edit-btn" onclick="editTeamName('white')">
+                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                    </button>
+                </div>
+                <div class="team-setting" data-team="yellow">
+                    <span class="team-label">Yellow</span>
+                    <button class="edit-btn" onclick="editTeamName('yellow')">
+                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                    </button>
+                </div>
+                <div class="team-setting" data-team="pink">
+                    <span class="team-label">Pink</span>
+                    <button class="edit-btn" onclick="editTeamName('pink')">
+                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="teams-container">
+            <div class="team-card red" onclick="handleTeamClick('red')">
+                <div class="team-header">
+                    <span class="team-label">Red</span>
+                    <button class="edit-btn" onclick="editTeamName('red')">
+                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                    </button>
+                </div>
+                <div class="team-score" id="redScore">0.0</div>
+            </div>
+
+            <div class="team-card green" onclick="handleTeamClick('green')">
+                <div class="team-header">
+                    <span class="team-label">Green</span>
+                    <button class="edit-btn" onclick="editTeamName('green')">
+                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                    </button>
+                </div>
+                <div class="team-score" id="greenScore">0.0</div>
+            </div>
+
+            <div class="team-card blue" onclick="handleTeamClick('blue')">
+                <div class="team-header">
+                    <span class="team-label">Blue</span>
+                    <button class="edit-btn" onclick="editTeamName('blue')">
+                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                    </button>
+                </div>
+                <div class="team-score" id="blueScore">0.0</div>
+            </div>
+
+            <div class="team-card white" onclick="handleTeamClick('white')">
+                <div class="team-header">
+                    <span class="team-label">White</span>
+                    <button class="edit-btn" onclick="editTeamName('white')">
+                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                    </button>
+                </div>
+                <div class="team-score" id="whiteScore">0.0</div>
+            </div>
+
+            <div class="team-card yellow" onclick="handleTeamClick('yellow')">
+                <div class="team-header">
+                    <span class="team-label">Yellow</span>
+                    <button class="edit-btn" onclick="editTeamName('yellow')">
+                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                    </button>
+                </div>
+                <div class="team-score" id="yellowScore">0.0</div>
+            </div>
+
+            <div class="team-card pink" onclick="handleTeamClick('pink')">
+                <div class="team-header">
+                    <span class="team-label">Pink</span>
+                    <button class="edit-btn" onclick="editTeamName('pink')">
+                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                    </button>
+                </div>
+                <div class="team-score" id="pinkScore">0.0</div>
+            </div>
+        </div>
+
+        <div class="rounds-container">
+            <div class="round-tabs">
+                <button class="round-tab active" onclick="showRound('yesno')">Yes / No round</button>
+                <button class="round-tab" onclick="showRound('simple')">Simple questions round</button>
+                <button class="round-tab" onclick="showRound('hard')">Hard question round</button>
+                <button class="round-tab" onclick="showRound('cap')">Captains round</button>
+                <button class="round-tab" onclick="showRound('stats')">Statistics</button>
+                <button class="round-tab" onclick="showRound('favorites')">Favorites</button>
+            </div>
+
+            <div id="roundContent">
+                <div class="question-container">
+                    <div class="question-text">Lets the battle begin!</div>
+                    <div class="question-number">Question Number: -</div>
+                    <div class="question-actions">
+                        <input type="file" id="csvUpload" accept=".csv" hidden>
+                        <label for="csvUpload" class="btn btn-gray btn-small">Upload CSV</label>
+                        <button class="btn btn-green btn-small" onclick="loadCSV()">Load Questions</button>
+                        <button class="btn btn-red btn-small" onclick="clearCSV()">Clear Questions</button>
+                        <button class="btn btn-gray btn-small" onclick="likeCurrentQuestion()" aria-label="Like current question">❤ Like</button>
+                        <button class="btn btn-gray btn-small" onclick="prevQuestion()">
+                            <img src="/game/icon/angle-left.svg" alt="Previous" width="20" height="15">
+                        </button>
+                        <button class="btn btn-gray btn-small" onclick="nextQuestion()">
+                            <img src="/game/icon/angle-right.svg" alt="Next" width="20" height="15">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tableContainer">
+        <div class="total" id="teamTotal"></div>
+    </div>
+</div>
+
+<!-- Audio Elements -->
+<audio id="soundG" src="/game/audio/mixkit-car-horn-718.wav"></audio>
+<audio id="soundR" src="/game/audio/mixkit-cartoon-blow-impact-2654.wav"></audio>
+<audio id="soundB" src="/game/audio/mixkit-impact-of-a-blow-2150.wav"></audio>
+<audio id="soundW" src="/game/audio/mixkit-bonus-collect-award-1937.wav"></audio>
+<audio id="soundY" src="/game/audio/mixkit-fairy-arcade-sparkle-866.wav"></audio>
+<audio id="soundP" src="/game/audio/mixkit-retro-game-notification-212.wav"></audio>
+<audio id="soundOff" src="/game/audio/mixkit-sad-game-over-trombone).mp3"></audio>
+<audio id="soundBackground1" src="/game/audio/last10secondAudio.mp3"></audio>
+
+<script>
+    let lastClickTime = 0;
+    let clickTimes = [];
+    let listening = true;
+
+    // Game state variables
+    let currentRound = 'yesno';
+    let currentQuestionIndex = 0;
+    let questionsData = [];
+    let isMuted = false;
+
+    // Team scores
+    const teamScores = {
+        red: 0,
+        green: 0,
+        blue: 0,
+        white: 0,
+        yellow: 0,
+        pink: 0
+    };
+
+    // Initialize the game
+    function initGame() {
+        loadState();
+        updateScores();
+        showRound(currentRound);
+    }
+
+    // Load game state from localStorage
+    function loadState() {
+        const savedState = localStorage.getItem('brainRingState');
+        if (savedState) {
+            const state = JSON.parse(savedState);
+            Object.assign(teamScores, state.scores || teamScores);
+            currentRound = state.currentRound || 'yesno';
+            currentQuestionIndex = state.currentQuestionIndex || 0;
+            isMuted = state.isMuted || false;
+        }
+    }
+
+    // Save game state to localStorage
+    function saveState() {
+        const state = {
+            scores: teamScores,
+            currentRound: currentRound,
+            currentQuestionIndex: currentQuestionIndex,
+            isMuted: isMuted
+        };
+        localStorage.setItem('brainRingState', JSON.stringify(state));
+    }
+
+    // Update team scores display
+    function updateScores() {
+        Object.keys(teamScores).forEach(team => {
+            const scoreElement = document.getElementById(`${team}Score`);
+            if (scoreElement) {
+                scoreElement.textContent = teamScores[team].toFixed(1);
+            }
+        });
+    }
+
+    // Handle team clicks
+    function handleTeamClick(team) {
+        if (!listening) return;
+        
+        const now = Date.now();
+        clickTimes.push(now);
+        
+        // Keep only clicks from last 2 seconds
+        clickTimes = clickTimes.filter(time => now - time < 2000);
+        
+        if (clickTimes.length >= 3) {
+            // Triple click detected
+            addScore(team, 1);
+            playSound(team);
+            clickTimes = [];
+        }
+    }
+
+    // Add score to team
+    function addScore(team, points) {
+        teamScores[team] += points;
+        updateScores();
+        saveState();
+    }
+
+    // Play sound for team
+    function playSound(team) {
+        if (isMuted) return;
+        
+        const soundMap = {
+            red: 'soundR',
+            green: 'soundG',
+            blue: 'soundB',
+            white: 'soundW',
+            yellow: 'soundY',
+            pink: 'soundP'
+        };
+        
+        const soundId = soundMap[team];
+        if (soundId) {
+            const audio = document.getElementById(soundId);
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(e => console.log('Audio play failed:', e));
+            }
+        }
+    }
+
+    // Change question
+    function changeQuestion(direction) {
+        if (questionsData.length === 0) return;
+        
+        currentQuestionIndex += direction;
+        if (currentQuestionIndex < 0) currentQuestionIndex = questionsData.length - 1;
+        if (currentQuestionIndex >= questionsData.length) currentQuestionIndex = 0;
+        
+        document.getElementById('questionValue').textContent = currentQuestionIndex + 1;
+        showQuestion();
+        saveState();
+    }
+
+    // Change round
+    function changeRound(direction) {
+        const rounds = ['yesno', 'simple', 'hard', 'cap', 'stats', 'favorites'];
+        const currentIndex = rounds.indexOf(currentRound);
+        let newIndex = currentIndex + direction;
+        
+        if (newIndex < 0) newIndex = rounds.length - 1;
+        if (newIndex >= rounds.length) newIndex = 0;
+        
+        currentRound = rounds[newIndex];
+        document.getElementById('roundValue').textContent = newIndex + 1;
+        showRound(currentRound);
+        saveState();
+    }
+
+    // Show round content
+    function showRound(round) {
+        currentRound = round;
+        
+        // Update tab appearance
+        document.querySelectorAll('.round-tab').forEach(tab => tab.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        // Show appropriate content
+        const content = document.getElementById('roundContent');
+        switch(round) {
+            case 'yesno':
+                content.innerHTML = buildYesNoTable();
+                break;
+            case 'simple':
+                content.innerHTML = buildSimpleTable();
+                break;
+            case 'hard':
+                content.innerHTML = buildHardTable();
+                break;
+            case 'cap':
+                content.innerHTML = buildCapTable();
+                break;
+            case 'stats':
+                content.innerHTML = buildStatsView();
+                break;
+            case 'favorites':
+                content.innerHTML = buildFavoritesView();
+                break;
+        }
+    }
+
+    // Build Yes/No table
+    function buildYesNoTable() {
+        return `
+            <div class="table-container">
+                <div class="table-title">Yes/No</div>
+                <table id="tableYesNo">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Red</th>
+                            <th>Green</th>
+                            <th>Blue</th>
+                            <th>White</th>
+                            <th>Yellow</th>
+                            <th>Pink</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableYesNo')"></td>
+                            <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableYesNo')"></td>
+                            <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableYesNo')"></td>
+                            <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableYesNo')"></td>
+                            <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableYesNo')"></td>
+                            <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableYesNo')"></td>
+                        </tr>
+                        <tr class="sum-row">
+                            <td>Sum</td>
+                            <td id="sum-red-yesno">0</td>
+                            <td id="sum-green-yesno">0</td>
+                            <td id="sum-blue-yesno">0</td>
+                            <td id="sum-white-yesno">0</td>
+                            <td id="sum-yellow-yesno">0</td>
+                            <td id="sum-pink-yesno">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    // Build Simple table
+    function buildSimpleTable() {
+        let tableHTML = `
+            <div class="table-container">
+                <div class="table-title">Simple Questions</div>
+                <table id="tableSimple">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Red</th>
+                            <th>Green</th>
+                            <th>Blue</th>
+                            <th>White</th>
+                            <th>Yellow</th>
+                            <th>Pink</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        for (let i = 1; i <= 40; i++) {
+            tableHTML += `
+                <tr>
+                    <td>${i}</td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableSimple')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableSimple')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableSimple')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableSimple')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableSimple')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableSimple')"></td>
+                </tr>
+            `;
+        }
+        
+        tableHTML += `
+                        <tr class="sum-row">
+                            <td>Sum</td>
+                            <td id="sum-red-simple">0</td>
+                            <td id="sum-green-simple">0</td>
+                            <td id="sum-blue-simple">0</td>
+                            <td id="sum-white-simple">0</td>
+                            <td id="sum-yellow-simple">0</td>
+                            <td id="sum-pink-simple">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        return tableHTML;
+    }
+
+    // Build Hard table
+    function buildHardTable() {
+        let tableHTML = `
+            <div class="table-container">
+                <div class="table-title">Hard Questions</div>
+                <table id="tableHard">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Red</th>
+                            <th>Green</th>
+                            <th>Blue</th>
+                            <th>White</th>
+                            <th>Yellow</th>
+                            <th>Pink</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        for (let i = 1; i <= 20; i++) {
+            tableHTML += `
+                <tr>
+                    <td>${i}</td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableHard')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableHard')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableHard')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableHard')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableHard')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableHard')"></td>
+                </tr>
+            `;
+        }
+        
+        tableHTML += `
+                        <tr class="sum-row">
+                            <td>Sum</td>
+                            <td id="sum-red-hard">0</td>
+                            <td id="sum-green-hard">0</td>
+                            <td id="sum-blue-hard">0</td>
+                            <td id="sum-white-hard">0</td>
+                            <td id="sum-yellow-hard">0</td>
+                            <td id="sum-pink-hard">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        return tableHTML;
+    }
+
+    // Build Cap table
+    function buildCapTable() {
+        let tableHTML = `
+            <div class="table-container">
+                <div class="table-title">Captains Round</div>
+                <table id="tableCap">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Red</th>
+                            <th>Green</th>
+                            <th>Blue</th>
+                            <th>White</th>
+                            <th>Yellow</th>
+                            <th>Pink</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        for (let i = 1; i <= 10; i++) {
+            tableHTML += `
+                <tr>
+                    <td>${i}</td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableCap')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableCap')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableCap')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableCap')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableCap')"></td>
+                    <td><input type="number" min="0" max="1" value="0" onchange="updateTable('tableCap')"></td>
+                </tr>
+            `;
+        }
+        
+        tableHTML += `
+                        <tr class="sum-row">
+                            <td>Sum</td>
+                            <td id="sum-red-cap">0</td>
+                            <td id="sum-green-cap">0</td>
+                            <td id="sum-blue-cap">0</td>
+                            <td id="sum-white-cap">0</td>
+                            <td id="sum-yellow-cap">0</td>
+                            <td id="sum-pink-cap">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        return tableHTML;
+    }
+
+    // Build Stats view
+    function buildStatsView() {
+        return `
+            <div class="table-container">
+                <div class="table-title">Statistics</div>
+                <div style="color: white; text-align: center; padding: 20px;">
+                    <h3>Team Performance</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+                        ${Object.keys(teamScores).map(team => `
+                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px;">
+                                <h4 style="margin: 0; text-transform: capitalize;">${team} Team</h4>
+                                <p style="font-size: 2em; margin: 10px 0;">${teamScores[team].toFixed(1)}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Build Favorites view
+    function buildFavoritesView() {
+        return `
+            <div class="table-container">
+                <div class="table-title">Favorite Questions</div>
+                <div style="color: white; text-align: center; padding: 20px;">
+                    <h3>Liked Questions</h3>
+                    <p>No liked questions yet. Click ❤ on questions to add them here!</p>
+                </div>
+            </div>
+        `;
+    }
+
+    // Update table calculations
+    function updateTable(tableId) {
+        const table = document.getElementById(tableId);
+        if (!table) return;
+        
+        const teams = ['red', 'green', 'blue', 'white', 'yellow', 'pink'];
+        
+        teams.forEach((team, teamIndex) => {
+            let sum = 0;
+            const inputs = table.querySelectorAll(`tbody tr td:nth-child(${teamIndex + 2}) input`);
+            inputs.forEach(input => {
+                sum += parseInt(input.value) || 0;
+            });
+            
+            const sumElement = document.getElementById(`sum-${team}-${tableId.replace('table', '').toLowerCase()}`);
+            if (sumElement) {
+                sumElement.textContent = sum;
+            }
+        });
+    }
+
+    // Load CSV questions
+    function loadCSV() {
+        const csvData = localStorage.getItem('uploadedCSV');
+        if (!csvData) {
+            alert('No CSV data found. Please upload a CSV file first.');
+            return;
+        }
+        
+        questionsData = csvData.split('\n').map(row => row.split(';'));
+        currentQuestionIndex = 0;
+        showQuestion();
+        alert(`Loaded ${questionsData.length} questions!`);
+    }
+
+    // Show current question
+    function showQuestion() {
+        if (questionsData.length === 0) {
+            document.querySelector('.question-text').textContent = 'No questions loaded';
+            document.querySelector('.question-number').textContent = 'Question Number: -';
+            return;
+        }
+        
+        const question = questionsData[currentQuestionIndex];
+        if (question && question.length > 0) {
+            document.querySelector('.question-text').textContent = question[0];
+            document.querySelector('.question-number').textContent = `Question Number: ${currentQuestionIndex + 1}`;
+        }
+    }
+
+    // Previous question
+    function prevQuestion() {
+        changeQuestion(-1);
+    }
+
+    // Next question
+    function nextQuestion() {
+        changeQuestion(1);
+    }
+
+    // Like current question
+    function likeCurrentQuestion() {
+        if (questionsData.length === 0) return;
+        alert('Question liked! (Feature coming soon)');
+    }
+
+    // Clear CSV data
+    function clearCSV() {
+        questionsData = [];
+        localStorage.removeItem('uploadedCSV');
+        showQuestion();
+        alert('Questions cleared!');
+    }
+
+    // Toggle mute
+    function toggleMute() {
+        isMuted = !isMuted;
+        document.querySelectorAll('audio').forEach(audio => audio.muted = isMuted);
+        document.getElementById('muteIcon').src = isMuted ? "/game/icon/muted_3541927.png" : "/game/icon/mute_17879746.png";
+        saveState();
+    }
+
+    // Toggle settings menu
+    function toggleSettingsMenu() {
+        const menu = document.getElementById('settingsMenu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Edit team name
+    function editTeamName(team) {
+        const newName = prompt(`Enter new name for ${team} team:`, team);
+        if (newName && newName.trim()) {
+            // Update team name in UI
+            const teamLabels = document.querySelectorAll(`[data-team="${team}"] .team-label`);
+            teamLabels.forEach(label => label.textContent = newName.trim());
+        }
+    }
+
+    // Retry session
+    function retrySession() {
+        if (confirm('Are you sure you want to reset the session? All scores will be lost.')) {
+            Object.keys(teamScores).forEach(team => teamScores[team] = 0);
+            currentQuestionIndex = 0;
+            updateScores();
+            showQuestion();
+            saveState();
+            alert('Session reset!');
+        }
+    }
+
+    // Initialize game when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        initGame();
+        
+        // Handle CSV upload
+        const csvUpload = document.getElementById('csvUpload');
+        if (csvUpload) {
+            csvUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        localStorage.setItem('uploadedCSV', e.target.result);
+                        alert('CSV file uploaded successfully!');
+                    };
+                    reader.readAsText(file);
+                }
+            });
+        }
+    });
+
+    // MQTT connection commented out to prevent connection errors
+    /*
+    function startMqtt() {
+    const ADAFRUIT_USERNAME = "vmishchenko";
+    const ADAFRUIT_IO_KEY = "YOUR_ADAFRUIT_IO_KEY_HERE";
+    const MQTT_URL = `wss://io.adafruit.com/mqtt`;
+    const topic = `${ADAFRUIT_USERNAME}/feeds/esp32-button`;
+
+    client = mqtt.connect("wss://io.adafruit.com/mqtt", {
+        username: ADAFRUIT_USERNAME,
+        password: ADAFRUIT_IO_KEY
+    });
+
+    client.on('connect', () => {
+        console.log("🔌 MQTT Connected");
+        client.subscribe(topic, (err) => {
+            if (err) {
+                console.error("❌ Subscription failed:", err);
+            } else {
+                console.log(`📡 Subscribed to ${topic}`);
+            }
+        });
+    });
+
+    client.on('message', (topic, message) => {
+        const msg = message.toString();
+        console.log(`📨 Received: ${msg}`);
+        
+        if (msg.includes('red')) {
+            console.log(`👉 Received: ${msg}, triggering key: red`);
+            handleTeamClick('red');
+        } else if (msg.includes('green')) {
+            console.log(`👉 Received: ${msg}, triggering key: green`);
+            handleTeamClick('green');
+        } else if (msg.includes('blue')) {
+            console.log(`👉 Received: ${msg}, triggering key: blue`);
+            handleTeamClick('blue');
+        } else if (msg.includes('white')) {
+            console.log(`👉 Received: ${msg}, triggering key: white`);
+            handleTeamClick('white');
+        } else if (msg.includes('yellow')) {
+            console.log(`👉 Received: ${msg}, triggering key: yellow`);
+            handleTeamClick('yellow');
+        } else if (msg.includes('pink')) {
+            console.log(`👉 Received: ${msg}, triggering key: pink`);
+            handleTeamClick('pink');
+        } else {
+            console.warn(`⚠️ Unknown message: ${msg}`);
+        }
+    });
+
+    client.on('error', err => console.error("❌ MQTT Error:", err));
+    client.on('close', () => console.log("🔌 MQTT connection closed"));
+    client.on('offline', () => console.log("📴 MQTT offline"));
+    client.on('reconnect', () => console.log("🔁 Reconnecting..."));
+    }
+    */
+
+
+    // --- End MQTT Related Functions ---
+
+    // (Legacy visibility loader removed to prevent desync)
+
+    // Initialize new game state system when DOM is ready
+    function initializeGameSystems() {
+        try {
+            window.gameState = new GameState();
+            window.notifications = new NotificationSystem();
+            window.errorHandler = new ErrorHandler();
+            window.audioManager = new AudioManager();
+            window.timerManager = new TimerManager();
+            window.gameLogic = new GameLogic(window.gameState, window.notifications, window.errorHandler, window.audioManager, window.timerManager);
+            window.tableManager = new TableManager(window.errorHandler);
+            console.log('✅ Game systems initialized successfully');
+        } catch (error) {
+            console.error('❌ Failed to initialize game systems:', error);
+        }
+    }
+
+    // Add export button functionality
+    function exportGameData() {
+        if (window.tableManager) {
+            window.tableManager.downloadGameDataAsJSON();
+        } else {
+            alert('Table manager not available');
+        }
+    }
+
+    // File processing functions
+    async function downloadAndProcessEventFiles() {
+        try {
+            const eventData = sessionStorage.getItem('selectedEvent');
+            if (!eventData) {
+                console.log('No event data found in sessionStorage');
+                return;
+            }
+
+            const event = JSON.parse(eventData);
+            console.log('Processing event:', event);
+
+            // Show loading indicator
+            showLoadingIndicator('Loading event files...');
+
+            let jsonSuccess = false;
+            let csvSuccess = false;
+            let errors = [];
+
+            // Download and process JSON file for table data
+            if (event.link_to_json) {
+                try {
+                    jsonSuccess = await downloadAndProcessJSON(event.link_to_json);
+                } catch (error) {
+                    errors.push(`JSON: ${error.message}`);
+                    console.warn('JSON processing failed:', error.message);
+                }
+            }
+
+            // Download and process CSV file for questions
+            if (event.link_to_csv) {
+                try {
+                    csvSuccess = await downloadAndProcessCSV(event.link_to_csv);
+                } catch (error) {
+                    errors.push(`CSV: ${error.message}`);
+                    console.warn('CSV processing failed:', error.message);
+                }
+            }
+
+            // Hide loading indicator
+            hideLoadingIndicator();
+            
+            // Show appropriate message based on results
+            if (jsonSuccess && csvSuccess) {
+                showNotification(`Event "${event.name}" loaded successfully!`, 'success');
+            } else if (jsonSuccess || csvSuccess) {
+                const successType = jsonSuccess ? 'table data' : 'questions';
+                showNotification(`Event "${event.name}" partially loaded (${successType}). Some files are not accessible.`, 'warning');
+            } else {
+                showNotification(`Event "${event.name}" could not be loaded. Files are not publicly accessible.`, 'error');
+            }
+
+            // Log detailed errors for debugging
+            if (errors.length > 0) {
+                console.warn('File loading errors:', errors);
+            }
+
+        } catch (error) {
+            console.error('Error processing event files:', error);
+            hideLoadingIndicator();
+            showNotification('Error loading event files: ' + error.message, 'error');
+        }
+    }
+
+    async function downloadAndProcessJSON(jsonUrl) {
+        try {
+            console.log('Downloading JSON from:', jsonUrl);
+            const response = await fetch(jsonUrl);
+            
+            if (!response.ok) {
+                if (response.status === 403) {
+                    throw new Error('JSON file is not publicly accessible (Access Denied)');
+                }
+                throw new Error(`Failed to download JSON: ${response.status}`);
+            }
+            
+            const responseText = await response.text();
+            
+            // Check if response is an XML error (S3 access denied)
+            if (responseText.includes('<Error>') && responseText.includes('AccessDenied')) {
+                throw new Error('JSON file is not publicly accessible (S3 Access Denied)');
+            }
+            
+            const jsonData = JSON.parse(responseText);
+            console.log('JSON data received:', jsonData);
+            
+            // Process JSON data for table data
+            if (window.tableManager && jsonData.teams) {
+                // Use the new method to process all teams data
+                window.tableManager.processAllTeamsData(jsonData);
+                console.log('JSON data processed and applied to tables');
+                return true; // Success
+            }
+            
+            return false; // No teams data
+            
+        } catch (error) {
+            console.error('Error processing JSON:', error);
+            if (error.message.includes('CORS') || error.message.includes('Failed to fetch')) {
+                throw new Error('JSON file blocked by CORS policy. Please use manual upload.');
+            }
+            throw error;
+        }
+    }
+
+    async function downloadAndProcessCSV(csvUrl) {
+        try {
+            console.log('Downloading CSV from:', csvUrl);
+            const response = await fetch(csvUrl);
+            
+            if (!response.ok) {
+                if (response.status === 403) {
+                    throw new Error('CSV file is not publicly accessible (Access Denied)');
+                }
+                throw new Error(`Failed to download CSV: ${response.status}`);
+            }
+            
+            const csvContent = await response.text();
+            
+            // Check if response is an XML error (S3 access denied)
+            if (csvContent.includes('<Error>') && csvContent.includes('AccessDenied')) {
+                throw new Error('CSV file is not publicly accessible (S3 Access Denied)');
+            }
+            
+            console.log('CSV content received:', csvContent);
+            
+            // Store CSV data in localStorage for questions functionality
+            localStorage.setItem('uploadedCSV', csvContent);
+            
+            // Process CSV for questions if the functionality exists
+            if (typeof questionsData !== 'undefined') {
+                questionsData = csvContent.split("\n").map(row => row.split(";"));
+                currentQuestionIndex = 0;
+                if (typeof showQuestion === 'function') {
+                    showQuestion();
+                }
+            }
+            
+            console.log('CSV data processed and stored');
+            return true; // Success
+            
+        } catch (error) {
+            console.error('Error processing CSV:', error);
+            if (error.message.includes('CORS') || error.message.includes('Failed to fetch')) {
+                throw new Error('CSV file blocked by CORS policy. Please use manual upload.');
+            }
+            throw error;
+        }
+    }
+
+    function showLoadingIndicator(message) {
+        // Remove existing indicator if any
+        const existing = document.getElementById('loadingIndicator');
+        if (existing) {
+            existing.remove();
+        }
+
+        const indicator = document.createElement('div');
+        indicator.id = 'loadingIndicator';
+        indicator.innerHTML = `
+            <div style="
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 20px;
+                border-radius: 10px;
+                z-index: 10000;
+                text-align: center;
+            ">
+                <div style="margin-bottom: 10px;">⏳</div>
+                <div>${message}</div>
+            </div>
+        `;
+        document.body.appendChild(indicator);
+    }
+
+    function hideLoadingIndicator() {
+        const indicator = document.getElementById('loadingIndicator');
+        if (indicator) {
+            indicator.remove();
+        }
+    }
+
+    function showNotification(message, type = 'info') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : type === 'warning' ? '#FF9800' : '#2196F3'};
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            z-index: 10000;
+            max-width: 300px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        `;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 5000);
+    }
+
+    // Manual file upload functions
+    function createFileUploadButton() {
+        const uploadBtn = document.createElement('button');
+        uploadBtn.id = 'uploadFilesBtn';
+        uploadBtn.textContent = 'Upload Files';
+        uploadBtn.onclick = () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json,.csv';
+            input.multiple = true;
+            input.onchange = handleManualFileUpload;
+            input.click();
+        };
+        uploadBtn.style.cssText = `
+            position: fixed;
+            top: 10px;
+            right: 120px;
+            z-index: 1000;
+            padding: 10px 15px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        `;
+        document.body.appendChild(uploadBtn);
+    }
+
+    function handleManualFileUpload(event) {
+        const files = event.target.files;
+        if (!files.length) return;
+
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+                const fileName = file.name.toLowerCase();
+                
+                if (fileName.endsWith('.json')) {
+                    try {
+                        const jsonData = JSON.parse(content);
+                        if (window.tableManager && jsonData.teams) {
+                            window.tableManager.processAllTeamsData(jsonData);
+                            showNotification('JSON file uploaded and processed successfully!', 'success');
+                        }
+                    } catch (error) {
+                        showNotification('Error processing JSON file: ' + error.message, 'error');
+                    }
+                } else if (fileName.endsWith('.csv')) {
+                    localStorage.setItem('uploadedCSV', content);
+                    if (typeof questionsData !== 'undefined') {
+                        questionsData = content.split("\n").map(row => row.split(";"));
+                        currentQuestionIndex = 0;
+                        if (typeof showQuestion === 'function') {
+                            showQuestion();
+                        }
+                    }
+                    showNotification('CSV file uploaded and processed successfully!', 'success');
+                }
+            };
+            reader.readAsText(file);
+        });
+    }
+
+    // Add export button to the UI if it doesn't exist
+    document.addEventListener('DOMContentLoaded', () => {
+        // Check if export button exists, if not create it
+        if (!document.getElementById('exportJsonBtn')) {
+            const exportBtn = document.createElement('button');
+            exportBtn.id = 'exportJsonBtn';
+            exportBtn.textContent = 'Export JSON';
+            exportBtn.onclick = exportGameData;
+            exportBtn.style.cssText = `
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                z-index: 1000;
+                padding: 10px 15px;
+                background: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+            `;
+            document.body.appendChild(exportBtn);
+        }
+
+        // Initialize game systems first
+        initializeGameSystems();
+
+        // Add manual upload button
+        createFileUploadButton();
+
+        // Check for event data and process files
+        downloadAndProcessEventFiles();
+    });
+
+</script>
+</body>
+</html>
