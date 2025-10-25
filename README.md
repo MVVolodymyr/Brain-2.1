@@ -11,7 +11,7 @@ A React application with AWS Amplify authentication for managing events and game
 
 ## Live Demo
 
-The application is deployed on GitHub Pages: [https://MVVolodymyr.github.io/my-app](https://MVVolodymyr.github.io/my-app)
+The application is deployed on GitHub Pages: [https://MVVolodymyr.github.io/Brain-2.1](https://MVVolodymyr.github.io/Brain-2.1)
 
 ## Getting Started
 
@@ -25,8 +25,8 @@ The application is deployed on GitHub Pages: [https://MVVolodymyr.github.io/my-a
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/MVVolodymyr/my-app.git
-cd my-app
+git clone https://github.com/MVVolodymyr/Brain-2.1.git
+cd Brain-2.1
 ```
 
 2. Install dependencies:
