@@ -1,3 +1,0 @@
- git add .
-   git commit -m "Add proper React app deployment workflow"
-   git push origin main
