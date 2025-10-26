@@ -4,6 +4,7 @@ import './App.css';
 
 // 1. ІМПОРТ ДЛЯ АУТЕНТИФІКАЦІЇ
 import { withAuthenticator } from '@aws-amplify/ui-react';
+import { fetchAuthSession } from 'aws-amplify/auth';
 import '@aws-amplify/ui-react/styles.css';
 
 // 2. ГОЛОВНИЙ КОМПОНЕНТ (ОТРИМУЄ ПРОПСИ signOut та user ВІД withAuthenticator)
@@ -165,27 +166,31 @@ function App({ signOut, user }) {
   useEffect(() => {
     if (user) {
       console.log('User object:', user);
-      console.log('User session:', user.signInUserSession);
       
-      // Try multiple ways to get the token
-      const idToken = user.signInUserSession?.idToken?.jwtToken 
-                   || user.signInUserSession?.accessToken?.jwtToken
-                   || user.attributes?.sub;
-      
-      console.log('ID Token found:', idToken ? 'Yes' : 'No');
-      
-      if (idToken) {
-        localStorage.setItem('idToken', idToken);
-        console.log('Token stored in localStorage');
-        
-        // Use setTimeout to ensure localStorage is fully written before loading events
-        setTimeout(() => {
-          loadEvents();
-        }, 100);
-      } else {
-        console.error('No ID token found in user session', user);
-        setError('Не вдалося отримати токен автентифікації. Спробуйте вийти та увійти знову.');
-      }
+      // Get the ID token using fetchAuthSession
+      fetchAuthSession()
+        .then((session) => {
+          console.log('Auth session:', session);
+          
+          // Get the ID token from the session
+          const idToken = session.tokens?.idToken?.toString();
+          console.log('ID Token found:', idToken ? 'Yes' : 'No');
+          
+          if (idToken) {
+            localStorage.setItem('idToken', idToken);
+            console.log('Token stored in localStorage');
+            
+            // Load events after token is stored
+            loadEvents();
+          } else {
+            console.error('No ID token found in session', session);
+            setError('Не вдалося отримати токен автентифікації. Спробуйте вийти та увійти знову.');
+          }
+        })
+        .catch(error => {
+          console.error('Error getting auth session:', error);
+          setError('Помилка автентифікації: ' + error.message);
+        });
     }
   }, [user, loadEvents]);
 
