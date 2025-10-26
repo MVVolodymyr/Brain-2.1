@@ -164,11 +164,12 @@ function App({ signOut, user }) {
   // Load events on component mount
   useEffect(() => {
     if (user) {
-      // Store the authentication token
+      // Store the authentication token FIRST, then load events
       const idToken = user.signInUserSession?.idToken?.jwtToken;
       if (idToken) {
         localStorage.setItem('idToken', idToken);
       }
+      // Load events after token is stored (or if no token, will show error)
       loadEvents();
     }
   }, [user, loadEvents]);
