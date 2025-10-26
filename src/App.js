@@ -25,7 +25,7 @@ function App({ signOut, user }) {
     }
     return { 
       'Content-Type': 'application/json',
-      'Authorization': idToken
+      'Authorization': `Bearer ${idToken}`
     };
   };
 
@@ -36,10 +36,16 @@ function App({ signOut, user }) {
     
     try {
       const headers = getAuthHeaders();
+      console.log('Fetching events from:', API_ENDPOINT);
+      console.log('Headers:', { ...headers, 'Authorization': 'Bearer [TOKEN]' });
+      
       const response = await fetch(API_ENDPOINT, {
         method: 'GET',
         headers: headers,
       });
+
+      console.log('Response status:', response.status);
+      console.log('Response OK:', response.ok);
 
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
