@@ -164,17 +164,26 @@ function App({ signOut, user }) {
   // Load events on component mount
   useEffect(() => {
     if (user) {
-      // Store the authentication token FIRST
-      const idToken = user.signInUserSession?.idToken?.jwtToken;
+      console.log('User object:', user);
+      console.log('User session:', user.signInUserSession);
+      
+      // Try multiple ways to get the token
+      const idToken = user.signInUserSession?.idToken?.jwtToken 
+                   || user.signInUserSession?.accessToken?.jwtToken
+                   || user.attributes?.sub;
+      
+      console.log('ID Token found:', idToken ? 'Yes' : 'No');
+      
       if (idToken) {
         localStorage.setItem('idToken', idToken);
+        console.log('Token stored in localStorage');
         
         // Use setTimeout to ensure localStorage is fully written before loading events
         setTimeout(() => {
           loadEvents();
         }, 100);
       } else {
-        console.error('No ID token found in user session');
+        console.error('No ID token found in user session', user);
         setError('Не вдалося отримати токен автентифікації. Спробуйте вийти та увійти знову.');
       }
     }
