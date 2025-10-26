@@ -164,13 +164,19 @@ function App({ signOut, user }) {
   // Load events on component mount
   useEffect(() => {
     if (user) {
-      // Store the authentication token FIRST, then load events
+      // Store the authentication token FIRST
       const idToken = user.signInUserSession?.idToken?.jwtToken;
       if (idToken) {
         localStorage.setItem('idToken', idToken);
+        
+        // Use setTimeout to ensure localStorage is fully written before loading events
+        setTimeout(() => {
+          loadEvents();
+        }, 100);
+      } else {
+        console.error('No ID token found in user session');
+        setError('Не вдалося отримати токен автентифікації. Спробуйте вийти та увійти знову.');
       }
-      // Load events after token is stored (or if no token, will show error)
-      loadEvents();
     }
   }, [user, loadEvents]);
 
