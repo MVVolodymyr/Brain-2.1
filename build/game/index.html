@@ -585,9 +585,17 @@
         showRound(currentRound);
     }
 
-    // Load game state from localStorage
+    // Get event ID from URL
+    function getEventIdFromUrl() {
+        const path = window.location.pathname;
+        const match = path.match(/\/game\/([^\/]+)/);
+        return match ? match[1] : 'default';
+    }
+    
+    // Load game state from localStorage with event-specific storage
     function loadState() {
-        const savedState = localStorage.getItem('brainRingState');
+        const eventId = getEventIdFromUrl();
+        const savedState = localStorage.getItem(`brainRingState_${eventId}`);
         if (savedState) {
             const state = JSON.parse(savedState);
             Object.assign(teamScores, state.scores || teamScores);
@@ -597,15 +605,16 @@
         }
     }
 
-    // Save game state to localStorage
+    // Save game state to localStorage with event-specific storage
     function saveState() {
+        const eventId = getEventIdFromUrl();
         const state = {
             scores: teamScores,
             currentRound: currentRound,
             currentQuestionIndex: currentQuestionIndex,
             isMuted: isMuted
         };
-        localStorage.setItem('brainRingState', JSON.stringify(state));
+        localStorage.setItem(`brainRingState_${eventId}`, JSON.stringify(state));
     }
 
     // Update team scores display
@@ -1183,14 +1192,21 @@
     // File processing functions
     async function downloadAndProcessEventFiles() {
         try {
-            const eventData = sessionStorage.getItem('selectedEvent');
+            // Get event ID from URL
+            const eventId = getEventIdFromUrl();
+            
+            // Try to get event data from sessionStorage or localStorage
+            const eventData = sessionStorage.getItem('selectedEvent') || localStorage.getItem(`eventData_${eventId}`);
             if (!eventData) {
-                console.log('No event data found in sessionStorage');
+                console.log('No event data found in sessionStorage or localStorage');
                 return;
             }
 
             const event = JSON.parse(eventData);
             console.log('Processing event:', event);
+            
+            // Store event data in localStorage for this event ID
+            localStorage.setItem(`eventData_${eventId}`, eventData);
 
             // Show loading indicator
             showLoadingIndicator('Loading event files...');

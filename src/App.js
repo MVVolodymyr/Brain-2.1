@@ -145,6 +145,7 @@ function App({ signOut, user }) {
 
   // Open game with event data
   const openGame = (event) => {
+    // Store event data in sessionStorage
     sessionStorage.setItem('selectedEvent', JSON.stringify({
       id: event.id,
       name: event.name,
@@ -153,7 +154,9 @@ function App({ signOut, user }) {
       created_date: event.created_date,
       last_update: event.last_update
     }));
-    window.open('/Brain-2.1/game', '_blank');
+    
+    // Navigate to game page with event ID in URL
+    window.location.href = `/Brain-2.1/game/${event.id}`;
   };
 
   // Format date
