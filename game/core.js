@@ -2,6 +2,10 @@
  * BrainRing Game State Management
  * Centralized state management for the quiz game
  */
+
+// Global flag to signal that core.js is loaded
+window.coreReady = false;
+
 class GameState {
     constructor() {
         // Generate session ID based on current timestamp
@@ -644,6 +648,9 @@ function initializeApp() {
         });
 
         console.log('✅ BrainRing application initialized successfully');
+        
+        // Signal that core.js is ready
+        window.coreReady = true;
         
     } catch (error) {
         console.error('❌ Failed to initialize application:', error);

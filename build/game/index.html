@@ -1482,14 +1482,18 @@
             document.body.appendChild(exportBtn);
         }
 
-        // Initialize game systems first
-        initializeGameSystems();
-
-        // Add manual upload button
-        createFileUploadButton();
-
-        // Check for event data and process files
-        downloadAndProcessEventFiles();
+        // Wait for core.js to be ready before initializing other systems
+        function waitForCoreAndInitialize() {
+            if (window.coreReady) {
+                initializeGameSystems();
+                createFileUploadButton();
+                downloadAndProcessEventFiles();
+            } else {
+                setTimeout(waitForCoreAndInitialize, 50);
+            }
+        }
+        
+        waitForCoreAndInitialize();
     });
 
 </script>
