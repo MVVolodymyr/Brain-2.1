@@ -13,9 +13,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brain Ring</title>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-    <script src="/game/core.js"></script>
-    <script src="/game/game.js"></script>
-    <script src="/game/tables.js"></script>
+    <script src="/Brain-2.1/game/core.js"></script>
+    <script src="/Brain-2.1/game/game.js"></script>
+    <script src="/Brain-2.1/game/tables.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -383,29 +383,29 @@
             <div class="control-group">
                 <label style="font-size: 30px;" >Question:</label>
                 <button onclick="changeQuestion(-1)">
-                    <img src="/game/icon/angle-left.svg" alt="Previous" width="20" height="20">
+                    <img src="/Brain-2.1/game/icon/angle-left.svg" alt="Previous" width="20" height="20">
                 </button>
                 <span style="font-size: 35px;" id="questionValue">1</span>
                 <button onclick="changeQuestion(1)">
-                    <img src="/game/icon/angle-right.svg" alt="Next" width="20" height="20">
+                    <img src="/Brain-2.1/game/icon/angle-right.svg" alt="Next" width="20" height="20">
                 </button>
             </div>
 
             <div class="control-group">
                 <label style="font-size: 30px;">Round:</label>
                 <button onclick="changeRound(-1)">
-                    <img src="/game/icon/angle-left.svg" alt="Previous" width="20" height="20">
+                    <img src="/Brain-2.1/game/icon/angle-left.svg" alt="Previous" width="20" height="20">
                 </button>
                 <span style="font-size: 35px;" id="roundValue">2</span>
                 <button onclick="changeRound(1)">
-                    <img src="/game/icon/angle-right.svg" alt="Next" width="20" height="20">
+                    <img src="/Brain-2.1/game/icon/angle-right.svg" alt="Next" width="20" height="20">
                 </button>
             </div>
         </div>
 
         <button class="retryBtn" onclick="retrySession()">Retry Session</button>
         <div style="position: relative;">
-            <img id="muteIcon" src="/game/icon/mute_17879746.png" alt="Mute" style="width: 25px; height: 25px; cursor: pointer;" onclick="toggleMute()">
+            <img id="muteIcon" src="/Brain-2.1/game/icon/mute_17879746.png" alt="Mute" style="width: 25px; height: 25px; cursor: pointer;" onclick="toggleMute()">
             <img id="settingsIcon" src="https://cdn-icons-png.flaticon.com/512/2099/2099058.png" alt="Settings"
                  style="width: 25px; height: 25px; cursor: pointer; margin-left: 10px;" onclick="toggleSettingsMenu()">
 
@@ -413,37 +413,37 @@
                 <div class="team-setting" data-team="red">
                     <span class="team-label">Red</span>
                     <button class="edit-btn" onclick="editTeamName('red')">
-                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                        <img style="width:15px; height: 15px" src="/Brain-2.1/game/icon/pencil.svg">
                     </button>
                 </div>
                 <div class="team-setting" data-team="green">
                     <span class="team-label">Green</span>
                     <button class="edit-btn" onclick="editTeamName('green')">
-                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                        <img style="width:15px; height: 15px" src="/Brain-2.1/game/icon/pencil.svg">
                     </button>
                 </div>
                 <div class="team-setting" data-team="blue">
                     <span class="team-label">Blue</span>
                     <button class="edit-btn" onclick="editTeamName('blue')">
-                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                        <img style="width:15px; height: 15px" src="/Brain-2.1/game/icon/pencil.svg">
                     </button>
                 </div>
                 <div class="team-setting" data-team="white">
                     <span class="team-label">White</span>
                     <button class="edit-btn" onclick="editTeamName('white')">
-                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                        <img style="width:15px; height: 15px" src="/Brain-2.1/game/icon/pencil.svg">
                     </button>
                 </div>
                 <div class="team-setting" data-team="yellow">
                     <span class="team-label">Yellow</span>
                     <button class="edit-btn" onclick="editTeamName('yellow')">
-                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                        <img style="width:15px; height: 15px" src="/Brain-2.1/game/icon/pencil.svg">
                     </button>
                 </div>
                 <div class="team-setting" data-team="pink">
                     <span class="team-label">Pink</span>
                     <button class="edit-btn" onclick="editTeamName('pink')">
-                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                        <img style="width:15px; height: 15px" src="/Brain-2.1/game/icon/pencil.svg">
                     </button>
                 </div>
             </div>
@@ -454,7 +454,7 @@
                 <div class="team-header">
                     <span class="team-label">Red</span>
                     <button class="edit-btn" onclick="editTeamName('red')">
-                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                        <img style="width:15px; height: 15px" src="/Brain-2.1/game/icon/pencil.svg">
                     </button>
                 </div>
                 <div class="team-score" id="redScore">0.0</div>
@@ -464,7 +464,7 @@
                 <div class="team-header">
                     <span class="team-label">Green</span>
                     <button class="edit-btn" onclick="editTeamName('green')">
-                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                        <img style="width:15px; height: 15px" src="/Brain-2.1/game/icon/pencil.svg">
                     </button>
                 </div>
                 <div class="team-score" id="greenScore">0.0</div>
@@ -474,7 +474,7 @@
                 <div class="team-header">
                     <span class="team-label">Blue</span>
                     <button class="edit-btn" onclick="editTeamName('blue')">
-                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                        <img style="width:15px; height: 15px" src="/Brain-2.1/game/icon/pencil.svg">
                     </button>
                 </div>
                 <div class="team-score" id="blueScore">0.0</div>
@@ -484,7 +484,7 @@
                 <div class="team-header">
                     <span class="team-label">White</span>
                     <button class="edit-btn" onclick="editTeamName('white')">
-                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                        <img style="width:15px; height: 15px" src="/Brain-2.1/game/icon/pencil.svg">
                     </button>
                 </div>
                 <div class="team-score" id="whiteScore">0.0</div>
@@ -494,7 +494,7 @@
                 <div class="team-header">
                     <span class="team-label">Yellow</span>
                     <button class="edit-btn" onclick="editTeamName('yellow')">
-                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                        <img style="width:15px; height: 15px" src="/Brain-2.1/game/icon/pencil.svg">
                     </button>
                 </div>
                 <div class="team-score" id="yellowScore">0.0</div>
@@ -504,7 +504,7 @@
                 <div class="team-header">
                     <span class="team-label">Pink</span>
                     <button class="edit-btn" onclick="editTeamName('pink')">
-                        <img style="width:15px; height: 15px" src="/game/icon/pencil.svg">
+                        <img style="width:15px; height: 15px" src="/Brain-2.1/game/icon/pencil.svg">
                     </button>
                 </div>
                 <div class="team-score" id="pinkScore">0.0</div>
@@ -532,10 +532,10 @@
                         <button class="btn btn-red btn-small" onclick="clearCSV()">Clear Questions</button>
                         <button class="btn btn-gray btn-small" onclick="likeCurrentQuestion()" aria-label="Like current question">❤ Like</button>
                         <button class="btn btn-gray btn-small" onclick="prevQuestion()">
-                            <img src="/game/icon/angle-left.svg" alt="Previous" width="20" height="15">
+                            <img src="/Brain-2.1/game/icon/angle-left.svg" alt="Previous" width="20" height="15">
                         </button>
                         <button class="btn btn-gray btn-small" onclick="nextQuestion()">
-                            <img src="/game/icon/angle-right.svg" alt="Next" width="20" height="15">
+                            <img src="/Brain-2.1/game/icon/angle-right.svg" alt="Next" width="20" height="15">
                         </button>
                     </div>
                 </div>
@@ -548,14 +548,14 @@
 </div>
 
 <!-- Audio Elements -->
-<audio id="soundG" src="/game/audio/mixkit-car-horn-718.wav"></audio>
-<audio id="soundR" src="/game/audio/mixkit-cartoon-blow-impact-2654.wav"></audio>
-<audio id="soundB" src="/game/audio/mixkit-impact-of-a-blow-2150.wav"></audio>
-<audio id="soundW" src="/game/audio/mixkit-bonus-collect-award-1937.wav"></audio>
-<audio id="soundY" src="/game/audio/mixkit-fairy-arcade-sparkle-866.wav"></audio>
-<audio id="soundP" src="/game/audio/mixkit-retro-game-notification-212.wav"></audio>
-<audio id="soundOff" src="/game/audio/mixkit-sad-game-over-trombone).mp3"></audio>
-<audio id="soundBackground1" src="/game/audio/last10secondAudio.mp3"></audio>
+<audio id="soundG" src="/Brain-2.1/game/audio/mixkit-car-horn-718.wav"></audio>
+<audio id="soundR" src="/Brain-2.1/game/audio/mixkit-cartoon-blow-impact-2654.wav"></audio>
+<audio id="soundB" src="/Brain-2.1/game/audio/mixkit-impact-of-a-blow-2150.wav"></audio>
+<audio id="soundW" src="/Brain-2.1/game/audio/mixkit-bonus-collect-award-1937.wav"></audio>
+<audio id="soundY" src="/Brain-2.1/game/audio/mixkit-fairy-arcade-sparkle-866.wav"></audio>
+<audio id="soundP" src="/Brain-2.1/game/audio/mixkit-retro-game-notification-212.wav"></audio>
+<audio id="soundOff" src="/Brain-2.1/game/audio/mixkit-sad-game-over-trombone).mp3"></audio>
+<audio id="soundBackground1" src="/Brain-2.1/game/audio/last10secondAudio.mp3"></audio>
 
 <script>
     let lastClickTime = 0;
@@ -1035,7 +1035,7 @@
     function toggleMute() {
         isMuted = !isMuted;
         document.querySelectorAll('audio').forEach(audio => audio.muted = isMuted);
-        document.getElementById('muteIcon').src = isMuted ? "/game/icon/muted_3541927.png" : "/game/icon/mute_17879746.png";
+        document.getElementById('muteIcon').src = isMuted ? "/Brain-2.1/game/icon/muted_3541927.png" : "/Brain-2.1/game/icon/mute_17879746.png";
         saveState();
     }
 
